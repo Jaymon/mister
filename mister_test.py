@@ -11,6 +11,22 @@ from testdata import TestCase
 from mister import Mister, BaseMister
 
 
+class MrHelloWorld(BaseMister):
+    def prepare(self, count, name):
+        # we're just going to return the number and the name we pass in 
+        for x in range(count):
+            yield ([x, name], {})
+
+    def map(self, x, name):
+        return "Process {} says 'hello {}'".format(x, name)
+
+    def reduce(self, output, value):
+        if output is None:
+            output = []
+        output.append(value)
+        return output
+
+
 class MrWordCount(BaseMister):
     def prepare(self, count, path):
         size = os.path.getsize(path)
@@ -87,4 +103,9 @@ class MrTest(TestCase):
             [k[0] for k in output_sync.most_common(10)],
             [k[0] for k in output_async.most_common(10)]
         )
+
+    def test_helloworld(self):
+        mr = MrHelloWorld("Alice")
+        output = mr.run()
+        print(output)
 

@@ -50,7 +50,7 @@ setup(
     install_requires=install_modules,
     tests_require=tests_modules,
     classifiers=[ # https://pypi.python.org/pypi?:action=list_classifiers
-        'Development Status :: 1 - Planning',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',

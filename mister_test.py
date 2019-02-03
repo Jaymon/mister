@@ -8,10 +8,13 @@ import re
 import testdata
 from testdata import TestCase
 
-from mister import Mister, BaseMister
+from mister import Mister, Miss
 
 
-class MrHelloWorld(BaseMister):
+testdata.basic_logging()
+
+
+class MrHelloWorld(Mister):
     def prepare(self, count, name):
         # we're just going to return the number and the name we pass in 
         for x in range(count):
@@ -27,7 +30,7 @@ class MrHelloWorld(BaseMister):
         return output
 
 
-class MrWordCount(BaseMister):
+class MrWordCount(Mister):
     def prepare(self, count, path):
         size = os.path.getsize(path)
         length = int(math.ceil(size / count))
@@ -57,7 +60,7 @@ class MrWordCount(BaseMister):
         return output
 
 
-class MrCount(BaseMister):
+class MrCount(Mister):
     def prepare(self, count, numbers):
         chunk = int(math.ceil(len(numbers) / count))
         # this splits the numbers into chunk size chunks
@@ -108,4 +111,34 @@ class MrTest(TestCase):
         mr = MrHelloWorld("Alice")
         output = mr.run()
         print(output)
+
+
+class MsCount(Miss):
+    def prepare(self, count, size):
+        for x in range(size):
+            yield x
+
+    def map(self, n):
+        return 1
+
+    def reduce(self, output, incr):
+        #pout.v(output, incr)
+        ret = output + incr if output else incr
+        return ret
+
+    def run(self):
+        self.queue_class.timeout = 0.1
+        return super(MsCount, self).run()
+
+
+class MsTest(TestCase):
+    def test_count(self):
+        size = 1000
+        #size = 10
+        #size = 100000
+        ms = MsCount(size)
+        total = ms.run()
+        self.assertEqual(size, total)
+
+
 

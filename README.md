@@ -6,6 +6,7 @@ Mister attempts to make running a map/reduce job approachable.
 
 When you've got data that isn't really big and so you're not quite ready to distribute the data across a gazillian machines and stuff but would still like an answer in a reasonable amount of time.
 
+
 ## 5 minute getting started
 
 Mister needs you to define three methods: `prepare` (get the data ready to be run across multiple processes), `map` (actually do something with the chunks of data from `prepare`), and `reduce` (mash all the values returned from `map` together).
@@ -37,15 +38,16 @@ reduce(self, output, value)
 
 The `output` is the global aggregation of all the `value` arguments the `reduce` method has seen. Basically, whatever you return from one `reduce` call will be passed back into the next `reduce` call as `output`. The `value` argument is whatever the recently finished `map` call returned.
 
+
 ### Bringing it all together
 
 So let's bring it all together in our `MrHelloWorld` job, first let's get the skeleton in place:
 
 ```python
-from mister import BaseMister
+from mister import Mister
 
 
-class MrHelloWorld(BaseMister):
+class MrHelloWorld(Mister):
 	def prepare(self, count, *args, **kwargs): pass
 	def map(self, *args, **kwargs): pass
 	def reduce(self, output, value): pass
@@ -113,13 +115,13 @@ I think word counting is the traditional map/reduce example? So here it is:
 ```python
 import os
 import re
-improt math
+import math
 from collections import Counter
 
-from mister import BaseMister
+from mister import Mister
 
 
-class MrWordCount(BaseMister):
+class MrWordCount(Mister):
     def prepare(self, count, path):
         """prepare segments the data for the map() method"""
         size = os.path.getsize(path)
@@ -151,7 +153,7 @@ class MrWordCount(BaseMister):
             output = Counter()
         output.update(count)
         return output
-        
+
 # let's count the bible
 path = "./testdata/bible-kjv.txt"
 mr = MrWordCount(path)
@@ -185,5 +187,5 @@ To install, use Pip:
 	
 Or, to grab the latest and greatest:
 
-	$ pip install --upgrade git+https://github.com/Jaymon/mister#egg=mister
+	$ pip install --upgrade "git+https://github.com/Jaymon/mister#egg=mister"
 

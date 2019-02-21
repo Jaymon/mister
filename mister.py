@@ -231,7 +231,8 @@ class Mister(object):
         if not count:
             count = multiprocessing.cpu_count()
             # we subtract one for the main process
-            count = count - 1 if count > 1 else 1
+            count = max(count - 1, 1)
+            #count = count - 1 if count > 1 else 1
         self.count = count
 
         self.args = args
